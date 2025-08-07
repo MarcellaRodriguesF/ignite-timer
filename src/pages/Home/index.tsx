@@ -17,6 +17,7 @@ const newCircleFormValidationSchema = zod.object({
   minutesAmount: zod.number().min(1).max(60, "Informe um valor entre 5 e 60"),
 });
 
+type NewCircleFormData = zod.infer<typeof newCircleFormValidationSchema>;
 
 export function Home() {
   const { createNewCircle, interruptCurrentCycle, activeCycle } =
@@ -26,14 +27,19 @@ export function Home() {
     resolver: zodResolver(newCircleFormValidationSchema),
   });
 
-  const { handleSubmit, watch } = newCycleForm;
+  const { handleSubmit, watch, reset } = newCycleForm;
 
   const isSubmitDisabled = watch("task") === "";
+
+  function handleCreateNewCircle(data: NewCircleFormData) {
+    createNewCircle(data);
+    reset();
+  }
 
   return (
     <>
       <HomeContainer>
-        <form action="" onSubmit={handleSubmit(createNewCircle)}>
+        <form action="" onSubmit={handleSubmit(handleCreateNewCircle)}>
           <FormProvider {...newCycleForm}>
             <NewCircleForm />
           </FormProvider>
